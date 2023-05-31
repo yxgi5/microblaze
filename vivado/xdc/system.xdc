@@ -7,9 +7,6 @@ set_property BITSTREAM.CONFIG.SPI_FALL_EDGE Yes [current_design]
 set_property BITSTREAM.CONFIG.CONFIGFALLBACK ENABLE [current_design]
 set_property CONFIG_MODE SPIx4 [current_design]
 
-set_property PACKAGE_PIN H26 [get_ports reset_n]
-set_property IOSTANDARD LVCMOS33 [get_ports reset_n]
-
 set_property PACKAGE_PIN G22 [get_ports sys_clk]
 set_property IOSTANDARD LVCMOS33 [get_ports sys_clk]
 create_clock -name sys_clk -period 20 [get_ports sys_clk]

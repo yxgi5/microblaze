@@ -44,7 +44,7 @@
 /*
  * Base address of the ELF image in the SPI flash
  */
-#define ELF_IMAGE_BASEADDR		0x300000
+#define ELF_IMAGE_BASEADDR		0x400000
 
 /*
  * Maximum number of bytes to read from flash in one go.
