@@ -28,7 +28,7 @@ set hardware_path ./xsa
 #set project_name1 hello1
 #set project_name2 hello2
 set project_name vitis_proj
-set bootloader_name fsbl
+#set bootloader_name fsbl
 set domain_name ${os_name}_domain
 set platform_name system_wrapper
 #set xsa_name system_wrapper.xsa
@@ -174,9 +174,9 @@ if {[file exists ${project_path}]} {
 
 
 
-    repo -set ./elf-bootloader-master
-    puts "app create -name ${bootloader_name} -platform ${platform_name} -domain ${domain_name} -template {SPI ELF Bootloader}"
-    app create -name ${bootloader_name} -platform ${platform_name} -domain ${domain_name} -template {SPI ELF Bootloader}
+#repo -set ./elf-bootloader-master
+#puts "app create -name ${bootloader_name} -platform ${platform_name} -domain ${domain_name} -template {SPI ELF Bootloader}"
+#app create -name ${bootloader_name} -platform ${platform_name} -domain ${domain_name} -template {SPI ELF Bootloader}
 
 
     #puts "importe the bootloader src files"
@@ -255,8 +255,8 @@ platform generate
 #Build application project
 #sdk projects -build -type app -name ${project_name}_app
 if {($build_type == "app")} {
-    puts "Build fsbl project"
-    app build -name ${bootloader_name}
+    #puts "Build fsbl project"
+    #app build -name ${bootloader_name}
     puts "Build app project"
     #app build -name ${bootloader1_name}
     #app build -name ${bootloader2_name}
@@ -264,8 +264,8 @@ if {($build_type == "app")} {
     #app build -name ${project_name2}
     app build -name ${project_name}
 } else {
-    puts "Build fsbl project"
-    sysproj build -name ${bootloader_name}_system
+    #puts "Build fsbl project"
+    #sysproj build -name ${bootloader_name}_system
     puts "Build system project"
     #sysproj build -name ${bootloader1_name}_system
     #sysproj build -name ${bootloader2_name}_system

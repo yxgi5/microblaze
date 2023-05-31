@@ -28,7 +28,7 @@ set hardware_path ./xsa
 #set project_name1 hello1
 #set project_name2 hello2
 set project_name vitis_proj
-set bootloader_name fsbl
+#set bootloader_name fsbl
 set domain_name ${os_name}_domain
 set platform_name system_wrapper
 #set xsa_name system_wrapper.xsa
@@ -163,9 +163,9 @@ platform write
 
 
 
-repo -set ./elf-bootloader-master
-puts "app create -name ${bootloader_name} -platform ${platform_name} -domain ${domain_name} -template {SPI ELF Bootloader}"
-app create -name ${bootloader_name} -platform ${platform_name} -domain ${domain_name} -template {SPI ELF Bootloader}
+#repo -set ./elf-bootloader-master
+#puts "app create -name ${bootloader_name} -platform ${platform_name} -domain ${domain_name} -template {SPI ELF Bootloader}"
+#app create -name ${bootloader_name} -platform ${platform_name} -domain ${domain_name} -template {SPI ELF Bootloader}
 
 
 #puts "importe the bootloader src files"

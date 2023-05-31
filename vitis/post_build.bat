@@ -15,8 +15,8 @@ FOR /F "delims=" %%g IN ('echo puts [pwd]^| xsct') do (SET TOPDIR=%%g)
 printf %TOPDIR%
 ::pause
 
-cd .\sdk_workspace\fsbl\_ide\bitstream
-updatemem -meminfo system_wrapper.mmi -data ..\..\Debug\fsbl.elf -proc system_i\microblaze_0 -bit system_wrapper.bit -out download.bit -force
+cd .\sdk_workspace\vitis_proj\_ide\bitstream
+updatemem -meminfo system_wrapper.mmi -data ..\..\Debug\vitis_proj.elf -proc system_i\microblaze_0 -bit system_wrapper.bit -out download.bit -force
 mkdir -p ..\flash
 (set BITFILE= %cd%\download.bit & echo the_ROM_image: & echo { & echo %BITFILE% & echo }) > ..\flash\bootimage.bif
 bootgen -arch fpga -image ..\flash\bootimage.bif -w -o ..\flash\BOOT.bin -interface spi
@@ -53,8 +53,7 @@ if exist output/ (
 :: pause
 mkdir output
 
-copy /b .\sdk_workspace\vitis_proj\Debug\vitis_proj.elf .\output\app.bin
-copy /b .\sdk_workspace\fsbl\_ide\flash\BOOT.bin .\output\fsbl.bin
+copy /b .\sdk_workspace\vitis_proj\_ide\flash\BOOT.bin .\output\app.bin
 :: copy /b .\sdk_workspace\vitis_proj\_ide\bitstream\download.bit .\output
 :: copy /b .\sdk_workspace\system_wrapper\export\system_wrapper\sw\system_wrapper\boot\fsbl.elf .\output
 :: copy /b .\sdk_workspace\vitis_proj\_ide\bootimage\BOOT.bin .\output\BOOT.bin
@@ -76,6 +75,6 @@ set PATH=D:\msys64\usr\bin;%PATH%
 
 :: bash -i -c "sleep 1 && du -b ./output/BOOT.bin | awk '{print substr($1,$2)}' | xargs -I {} printf %%x {} " > .\output\BOOT.txt
 bash -i -c "sleep 1 && du -b ./output/app.bin | awk '{print substr($1,$2)}' | xargs -I {} printf %%x {} " > .\output\app.txt
-bash -i -c "sleep 1 && du -b ./output/fsbl.bin | awk '{print substr($1,$2)}' | xargs -I {} printf %%x {} " > .\output\fsbl.txt
+::bash -i -c "sleep 1 && du -b ./output/fsbl.bin | awk '{print substr($1,$2)}' | xargs -I {} printf %%x {} " > .\output\fsbl.txt
 
 pause
