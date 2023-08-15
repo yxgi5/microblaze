@@ -1,5 +1,5 @@
 # microblaze 最小系统
-mb时钟来自mig7, 有dc无ic，通过axi_smc访问mig7
+mb时钟来自mig7, 有dc无ic，通过axi_smc访问mig7, ddr3速率配置为800Mbps(clk400M)
 
 # block design
 
