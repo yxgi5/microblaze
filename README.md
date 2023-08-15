@@ -1,3 +1,6 @@
+# microblaze 最小系统
+mb时钟来自mig7, 有dc无ic，通过axi_smc访问mig7
+
 # block design
 
 [doc/system.pdf](doc/system.pdf)
