@@ -33,9 +33,16 @@
 #ifndef __PLATFORM_H_
 #define __PLATFORM_H_
 
-#include "platform_config.h"
+void init_platform(void);
+void cleanup_platform(void);
 
-void init_platform();
-void cleanup_platform();
-
+#if defined (UDP_UPDATE) || defined (TCP_UPDATE)
+void timer_callback();
+void platform_setup_timer();
+void platform_enable_interrupts();
+#endif // UDP_UPDATE
+#if defined (ARMR5) || (__aarch64__) || (__arm__)
+uint64_t get_time_ms(void);
+float get_time_s(void);
 #endif
+#endif // __PLATFORM_H_
