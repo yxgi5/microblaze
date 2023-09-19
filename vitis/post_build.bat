@@ -1,4 +1,4 @@
-@echo off
+@echo on
 
 call D:\Xilinx\Vitis\2020.1\settings64.bat
 
@@ -16,10 +16,19 @@ printf %TOPDIR%
 ::pause
 
 cd .\sdk_workspace\fsbl\_ide\bitstream
-updatemem -meminfo system_wrapper.mmi -data ..\..\Debug\fsbl.elf -proc system_i/microblaze_0 -bit system_wrapper.bit -out download.bit -force
-mkdir -p ..\flash
+::updatemem -meminfo system_wrapper.mmi -data ..\..\Debug\fsbl.elf -proc system_i/microblaze_0 -bit system_wrapper.bit -out download.bit -force
+call updatemem.bat -meminfo system_wrapper.mmi -data ..\..\Debug\fsbl.elf -proc system_i/microblaze_0 -bit system_wrapper.bit -out download.bit -force
+::call:updatememfun
+echo %errorlevel%
+if not exist ..\flash (
+    rmdir /s/q ..\flash
+)
+
 (set BITFILE= %cd%\download.bit & echo the_ROM_image: & echo { & echo %BITFILE% & echo }) > ..\flash\bootimage.bif
-bootgen -arch fpga -image ..\flash\bootimage.bif -w -o ..\flash\BOOT.bin -interface spi
+::bootgen -arch fpga -image ..\flash\bootimage.bif -w -o ..\flash\BOOT.bin -interface spi
+call bootgen.bat -arch fpga -image ..\flash\bootimage.bif -w -o ..\flash\BOOT.bin -interface spi
+::call:bootgenfun
+echo %errorlevel%
 
 :: updatemem -meminfo system_wrapper.mmi -data ..\..\Debug\vitis_proj.elf -proc system_i\microblaze_0 -bit system_wrapper.bit -out download.bit -force
 :: mkdir -p ..\flash
@@ -79,3 +88,20 @@ bash -i -c "sleep 1 && du -b ./output/app.bin | awk '{print substr($1,$2)}' | xa
 bash -i -c "sleep 1 && du -b ./output/fsbl.bin | awk '{print substr($1,$2)}' | xargs -I {} printf %%x {} " > .\output\fsbl.txt
 
 pause
+exit /B
+
+rem :updatememfun
+rem echo.
+rem echo fuck you
+rem ::echo %cd%
+rem ::call D:\Xilinx\Vitis\2020.1\settings64.bat
+rem ::updatemem -meminfo system_wrapper.mmi -data ..\..\Debug\fsbl.elf -proc system_i/microblaze_0 -bit system_wrapper.bit -out download.bit -force
+rem ::call updatemem.bat -data ..\..\Debug\fsbl.elf -proc system_i/microblaze_0 -bit system_wrapper.bit -out download.bit -force
+rem goto:eof
+
+rem :bootgenfun
+rem echo.
+rem echo fuck your mother
+rem ::(set BITFILE= %cd%\download.bit & echo the_ROM_image: & echo { & echo %BITFILE% & echo }) > ..\flash\bootimage.bif
+rem ::bootgen -arch fpga -image ..\flash\bootimage.bif -w -o ..\flash\BOOT.bin -interface spi
+rem goto:eof
