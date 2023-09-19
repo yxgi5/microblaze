@@ -24,7 +24,8 @@ if not exist ..\flash (
     rmdir /s/q ..\flash
 )
 
-(set BITFILE= %cd%\download.bit & echo the_ROM_image: & echo { & echo %BITFILE% & echo }) > ..\flash\bootimage.bif
+set BITFILE= %cd%\download.bit
+(echo the_ROM_image: & echo { & echo %BITFILE% & echo }) > ..\flash\bootimage.bif
 ::bootgen -arch fpga -image ..\flash\bootimage.bif -w -o ..\flash\BOOT.bin -interface spi
 call bootgen.bat -arch fpga -image ..\flash\bootimage.bif -w -o ..\flash\BOOT.bin -interface spi
 ::call:bootgenfun
@@ -92,7 +93,7 @@ exit /B
 
 rem :updatememfun
 rem echo.
-rem echo fuck you
+rem echo updatememfun
 rem ::echo %cd%
 rem ::call D:\Xilinx\Vitis\2020.1\settings64.bat
 rem ::updatemem -meminfo system_wrapper.mmi -data ..\..\Debug\fsbl.elf -proc system_i/microblaze_0 -bit system_wrapper.bit -out download.bit -force
@@ -101,7 +102,7 @@ rem goto:eof
 
 rem :bootgenfun
 rem echo.
-rem echo fuck your mother
+rem echo bootgenfun
 rem ::(set BITFILE= %cd%\download.bit & echo the_ROM_image: & echo { & echo %BITFILE% & echo }) > ..\flash\bootimage.bif
 rem ::bootgen -arch fpga -image ..\flash\bootimage.bif -w -o ..\flash\BOOT.bin -interface spi
 rem goto:eof
