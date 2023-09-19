@@ -16,7 +16,7 @@ printf %TOPDIR%
 ::pause
 
 cd .\sdk_workspace\fsbl\_ide\bitstream
-updatemem -meminfo system_wrapper.mmi -data ..\..\Debug\fsbl.elf -proc system_i\microblaze_0 -bit system_wrapper.bit -out download.bit -force
+updatemem -meminfo system_wrapper.mmi -data ..\..\Debug\fsbl.elf -proc system_i/microblaze_0 -bit system_wrapper.bit -out download.bit -force
 mkdir -p ..\flash
 (set BITFILE= %cd%\download.bit & echo the_ROM_image: & echo { & echo %BITFILE% & echo }) > ..\flash\bootimage.bif
 bootgen -arch fpga -image ..\flash\bootimage.bif -w -o ..\flash\BOOT.bin -interface spi
