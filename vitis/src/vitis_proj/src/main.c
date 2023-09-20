@@ -240,16 +240,16 @@ int main()
 //    	bsp_printf("pi=%f\n\r",3.1415);
 //    	ret32 = xgpio_i2c_reg16_read(I2C_NO_0, 0x80>>1, 0x0000, &ret8, STRETCH_ON);
 
-		XGpio_DiscreteWrite(&XGpioInst, 1, 0xf0);
-		usleep(1000000);
-		XGpio_DiscreteWrite(&XGpioInst, 1, 0xf1);
-		usleep(1000000);
-		XGpio_DiscreteWrite(&XGpioInst, 1, 0xf2);
-		usleep(1000000);
-		XGpio_DiscreteWrite(&XGpioInst, 1, 0xf4);
-		usleep(1000000);
-		XGpio_DiscreteWrite(&XGpioInst, 1, 0xf8);
-		usleep(1000000);
+//		XGpio_DiscreteWrite(&XGpioInst, 1, 0xf0);
+//		usleep(1000000);
+//		XGpio_DiscreteWrite(&XGpioInst, 1, 0xf1);
+//		usleep(1000000);
+//		XGpio_DiscreteWrite(&XGpioInst, 1, 0xf2);
+//		usleep(1000000);
+//		XGpio_DiscreteWrite(&XGpioInst, 1, 0xf4);
+//		usleep(1000000);
+//		XGpio_DiscreteWrite(&XGpioInst, 1, 0xf8);
+//		usleep(1000000);
     }
 	// never reached
     cleanup_platform();

@@ -43,7 +43,7 @@ then
     exit 1
 else
     echo -e "\n"
-    echo -e "\033[42;31m cp fsbl.bin done!!! Press any key to exit \033[0m"
+    echo -e "\033[42;31m cp fsbl.bin done!!! \033[0m"
 fi
 
 du -b ./output/fsbl.bin | awk '{print substr($1,$2)}' | xargs -I {} printf "%x\n" {} > ./output/fsbl.txt
@@ -52,6 +52,20 @@ then
     echo -e "\n"
     echo -e "\033[41;36m calc size fail!!! Press any key to exit \033[0m"
     exit 1
+fi
+
+# BOOT.bin for remote update
+cp ./sdk_workspace/fsbl/_ide/bitstream/download.bit ./output/
+source /opt/Xilinx/Vivado/2020.1/settings64.sh
+vivado -mode tcl -source write_cfgmem.tcl
+if [ $? != 0 ]
+then
+    echo -e "\n"
+    echo -e "\033[41;36m Generate BOOT.bin fail!!! Press any key to exit \033[0m"
+    exit 1
+else
+    echo -e "\n"
+    echo -e "\033[42;31m Generate BOOT.bin done!!! Press any key to exit \033[0m"
 fi
 
 # function pause(){

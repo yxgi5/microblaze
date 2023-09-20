@@ -88,6 +88,10 @@ set PATH=D:\msys64\usr\bin;%PATH%
 bash -i -c "sleep 1 && du -b ./output/app.bin | awk '{print substr($1,$2)}' | xargs -I {} printf %%x {} " > .\output\app.txt
 bash -i -c "sleep 1 && du -b ./output/fsbl.bin | awk '{print substr($1,$2)}' | xargs -I {} printf %%x {} " > .\output\fsbl.txt
 
+copy /b .\sdk_workspace\fsbl\_ide\bitstream\download.bit .\output\download.bit
+call D:\Xilinx\Vivado\2020.1\settings64.bat
+vivado -mode tcl -source write_cfgmem.tcl
+
 pause
 exit /B
 

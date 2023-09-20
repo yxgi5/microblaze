@@ -2073,6 +2073,7 @@ int qspi_update(u32 total_bytes, const u8 *flash_data)
 //    sprintf(msg, "INFO:Elapsed time = %2.3f sec.\r\n",elapsed_time);
 //    sent_msg(msg);
     //ÏòFLASHÖÐÐŽÈëÊýŸÝ
+#if 1
     printf("Performing Program Operation...\r\n");
     sent_msg("Performing Program Operation...\r\n");
 //    start_time = get_time_s();
@@ -2094,8 +2095,9 @@ int qspi_update(u32 total_bytes, const u8 *flash_data)
     sent_msg("Program Operation Successful.\r\n");
 //    sprintf(msg, "INFO:Elapsed time = %2.3f sec.\r\n",elapsed_time);
 //    sent_msg(msg);
+#endif
     //Ê¹ÓÃQUADÄ£ÊœŽÓFLASHÖÐ¶Á³öÊýŸÝ²¢œøÐÐÐ£Ñé
-    BufferPtr = &ReadBuffer[DATA_OFFSET + DUMMY_SIZE];
+    BufferPtr = &ReadBuffer[DATA_OFFSET + 4];
     printf("Performing Verify Operation...\r\n");
     sent_msg("Performing Verify Operation...\r\n");
     memset(ReadBuffer, 0x00, sizeof(ReadBuffer));
@@ -2194,6 +2196,10 @@ void FlashWrite(XSpi *QspiPtr, u32 Address, u32 ByteCount, u8 Command)
 
 void FlashRead(XSpi *QspiPtr, u32 Address, u32 ByteCount, u8 Command)
 {
+	/*
+	 * Wait while the Flash is busy.
+	 */
+	SpiFlashWaitForFlashReady();
     /*
      * Setup the write command with the specified address and data for the
      * FLASH
@@ -2203,10 +2209,14 @@ void FlashRead(XSpi *QspiPtr, u32 Address, u32 ByteCount, u8 Command)
     WriteBuffer[ADDRESS_2_OFFSET] = (u8) ((Address & 0xFF00) >> 8);
     WriteBuffer[ADDRESS_3_OFFSET] = (u8) (Address & 0xFF);
 
-    if ((Command == FAST_READ_CMD) || (Command == DUAL_READ_CMD)
-            || (Command == QUAD_READ_CMD)) {
+    if ((Command == FAST_READ_CMD)) {
         ByteCount += DUMMY_SIZE;
+    } else if (Command == DUAL_READ_CMD) {
+    	ByteCount += 2;
+    } else if (Command == QUAD_READ_CMD) {
+    	ByteCount += 4;
     }
+
     /*
      * Send the read command to the FLASH to read the specified number
      * of bytes from the FLASH, send the read command and address and
