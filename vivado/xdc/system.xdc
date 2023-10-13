@@ -41,6 +41,7 @@ set_property PACKAGE_PIN A23 [get_ports {gpio_tri_io[0]}]
 set_property IOSTANDARD LVCMOS33 [get_ports {gpio_tri_io[*]}]
 
 create_clock -period 8.000 -name rgmii_rxc [get_ports rgmii_rxc]
+#create_clock -period 8.000 -name rgmii_txc [get_ports rgmii_txc]
 #set_property -dict {IOSTANDARD LVCMOS33 PACKAGE_PIN H22 } [get_ports {phy_reset_out[0]}]
 #set_property -dict {IOSTANDARD LVCMOS33 PACKAGE_PIN AA25} [get_ports {mdio_mdc}]
 #set_property -dict {IOSTANDARD LVCMOS33 PACKAGE_PIN Y25 } [get_ports {mdio_mdio_io}]
@@ -50,12 +51,12 @@ create_clock -period 8.000 -name rgmii_rxc [get_ports rgmii_rxc]
 #set_property -dict {IOSTANDARD LVCMOS33 PACKAGE_PIN U25 } [get_ports {rgmii_rd[3]}]
 #set_property -dict {IOSTANDARD LVCMOS33 PACKAGE_PIN U26 } [get_ports {rgmii_rx_ctl}]
 #set_property -dict {IOSTANDARD LVCMOS33 PACKAGE_PIN AA23} [get_ports {rgmii_rxc}]
-#set_property -dict {IOSTANDARD LVCMOS33 PACKAGE_PIN V22 } [get_ports {rgmii_td[0]}]
-#set_property -dict {IOSTANDARD LVCMOS33 PACKAGE_PIN W26 } [get_ports {rgmii_td[1]}]
-#set_property -dict {IOSTANDARD LVCMOS33 PACKAGE_PIN W25 } [get_ports {rgmii_td[2]}]
-#set_property -dict {IOSTANDARD LVCMOS33 PACKAGE_PIN W21 } [get_ports {rgmii_td[3]}]
-#set_property -dict {IOSTANDARD LVCMOS33 PACKAGE_PIN W23 } [get_ports {rgmii_tx_ctl}]
-#set_property -dict {IOSTANDARD LVCMOS33 PACKAGE_PIN AB24 } [get_ports {rgmii_txc}]
+#set_property -dict {IOSTANDARD LVCMOS33 PACKAGE_PIN V22  SLEW FAST } [get_ports {rgmii_td[0]}]
+#set_property -dict {IOSTANDARD LVCMOS33 PACKAGE_PIN W26  SLEW FAST } [get_ports {rgmii_td[1]}]
+#set_property -dict {IOSTANDARD LVCMOS33 PACKAGE_PIN W25  SLEW FAST } [get_ports {rgmii_td[2]}]
+#set_property -dict {IOSTANDARD LVCMOS33 PACKAGE_PIN W21  SLEW FAST } [get_ports {rgmii_td[3]}]
+#set_property -dict {IOSTANDARD LVCMOS33 PACKAGE_PIN W23  SLEW FAST } [get_ports {rgmii_tx_ctl}]
+#set_property -dict {IOSTANDARD LVCMOS33 PACKAGE_PIN AB24 SLEW FAST } [get_ports {rgmii_txc}]
 
 set_property -dict {IOSTANDARD LVCMOS18 PACKAGE_PIN W1  } [get_ports {phy_reset_out[0]}]
 set_property -dict {IOSTANDARD LVCMOS18 PACKAGE_PIN Y2  } [get_ports {mdio_mdc}]
@@ -72,3 +73,16 @@ set_property -dict {IOSTANDARD LVCMOS18 PACKAGE_PIN AA3 SLEW FAST } [get_ports {
 set_property -dict {IOSTANDARD LVCMOS18 PACKAGE_PIN AA2 SLEW FAST } [get_ports {rgmii_td[3]}]
 set_property -dict {IOSTANDARD LVCMOS18 PACKAGE_PIN Y3  SLEW FAST } [get_ports {rgmii_tx_ctl}]
 set_property -dict {IOSTANDARD LVCMOS18 PACKAGE_PIN AC2 SLEW FAST } [get_ports {rgmii_txc}]
+
+#set_output_delay 1.2 -max -clock [get_clocks rgmii_txc] [get_ports {rgmii_td[*] rgmii_tx_ctl}]
+#set_output_delay -1.2 -min -clock [get_clocks rgmii_txc] [get_ports {rgmii_td[*] rgmii_tx_ctl}]
+#set_output_delay 1.2 -max -clock [get_clocks rgmii_txc] [get_ports {rgmii_td[*] rgmii_tx_ctl}] -clock_fall -add_delay 
+#set_output_delay -1.2 -min -clock [get_clocks rgmii_txc] [get_ports {rgmii_td[*] rgmii_tx_ctl}] -clock_fall -add_delay
+
+#set_input_delay -clock [get_clocks rgmii_rxc] -max -1 [get_ports {rgmii_rd[*] rgmii_rx_ctl}]
+#set_input_delay -clock [get_clocks rgmii_rxc] -min -3 [get_ports {rgmii_rd[*] rgmii_rx_ctl}]
+#set_input_delay -clock [get_clocks rgmii_rxc] -clock_fall -max -1 -add_delay [get_ports {rgmii_rd[*] rgmii_rx_ctl}]
+#set_input_delay -clock [get_clocks rgmii_rxc] -clock_fall -min -3 -add_delay [get_ports {rgmii_rd[*] rgmii_rx_ctl}]
+
+
+
