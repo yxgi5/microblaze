@@ -125,6 +125,14 @@ int XClk_Wiz_dynamic_reconfig(XClk_Wiz * ClkWizInstance, u32 DeviceId)
     }
 
 //    //in=200
+//    //out1=297
+//    Multiply_Int = 37;
+//    Multiply_Frac = 125;
+//    Divide = 5;
+//    Divide0_Int = 5;
+//    Divide0_Frac = 0;
+
+//    //in=200
 //    //out1=148.5
 //    Multiply_Int = 37;
 //    Multiply_Frac = 125;

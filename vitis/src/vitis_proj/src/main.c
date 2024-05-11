@@ -88,17 +88,22 @@ int main()
 #endif // XPAR_XGPIO_I2C_0_AXI_GPIO_0_DEVICE_ID
 
 
-    bsp_printf("***************************\n\r");
+    bsp_printf("\r\n\r\n***************************\n\r");
     bsp_printf("Test common API.\n\r");
-    bsp_printf("\r\n%s,%s\r\n",__DATE__,__TIME__);
+    bsp_printf("\r\n%s, UTC %s\r\n",__DATE__,__TIME__);
 #if defined (XPAR_AXI_LITE_REG_NUM_INSTANCES) && (XPAR_AXI_LITE_REG_0_DEVICE_ID == 0)
 	__HW_VER__ = AXI_LITE_REG_mReadReg(XPAR_AXI_LITE_REG_0_S00_AXI_BASEADDR, AXI_LITE_REG_S00_AXI_SLV_REG0_OFFSET);
 	bsp_printf("hardware ver = 0x%08x\n\r", __HW_VER__);
 #endif // XPAR_AXI_LITE_REG_NUM_INSTANCES
-#if defined (__SW_VER__)
+#ifdef SW_VER_BY_COMPILE_TIME
+    __SW_VER__ = GetSoftWareVersion();
     bsp_printf("software ver = 0x%08x\n\r", __SW_VER__);
     bsp_printf("***************************\n\r");
-#endif // __SW_VER__
+#elif defined (__SW_VER__)
+    bsp_printf("software ver = 0x%08x\n\r", __SW_VER__);
+    bsp_printf("***************************\n\r");
+#endif // __SW_VER__ || SW_VER_BY_COMPILE_TIME
+
 
 #if defined(__SIL9136_H__)
     sil9136_config();
@@ -204,6 +209,14 @@ int main()
 	}
 #endif // XPAR_XAXIVDMA_NUM_INSTANCES
 
+#if defined (XPAR_XVPROCSS_NUM_INSTANCES)
+	Status = vpss_config();
+	if (Status != XST_SUCCESS)
+	{
+		Xil_Assert(__FILE__, __LINE__);
+		return XST_FAILURE ;
+	}
+#endif // XPAR_XVPROCSS_NUM_INSTANCES
 
 #if defined (XPAR_XCSI2TX_NUM_INSTANCES)
 	Status = csi_tx_config();

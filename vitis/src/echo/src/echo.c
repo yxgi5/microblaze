@@ -46,7 +46,7 @@ void print_app_header()
 #else
 	xil_printf("\n\r\n\r-----lwIPv6 TCP echo server ------\n\r");
 #endif
-	xil_printf("TCP packets sent to port 6001 will be echoed back\n\r");
+	xil_printf("TCP packets sent to port 7 will be echoed back\n\r");
 }
 
 err_t recv_callback(void *arg, struct tcp_pcb *tpcb,

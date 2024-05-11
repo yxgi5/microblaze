@@ -37,12 +37,13 @@
 #endif
 
 // reserve enough memory size for stack+heap+bss+data+text
-#define RESERVE_SIZE				(0x1000000)
+#define RESERVE_SIZE				(0x10000000)
 #define FRAME_BUFFER_BASE_ADDR  	(DDR_BASEADDR + RESERVE_SIZE)
 
 // change these macros if needed
 
 #if (XPAR_XAXIVDMA_NUM_INSTANCES >= 1U)
+//#define VDMA_0_BPP					(2)	// byte per pixel
 #define VDMA_0_BPP					(3)	// byte per pixel
 //#if (XPAR_AXIVDMA_0_INCLUDE_S2MM == 1U)
 #define VDMA_0_W_OFFSET				(0) // (y*w+x)*Bpp
