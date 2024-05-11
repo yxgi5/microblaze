@@ -100,6 +100,8 @@ else
     echo -e "\033[42;31m Generate BOOT.bin done!!! Press any key to exit \033[0m"
 fi
 
+bash -c "source clean.sh -b && exit"
+
 # function pause(){
 # #	read -p "$*"
 #     printf "$*\n"
