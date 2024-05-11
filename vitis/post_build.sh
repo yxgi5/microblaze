@@ -8,8 +8,41 @@ top=$PWD
 cd ./sdk_workspace/fsbl/_ide/bitstream
 updatemem -meminfo system_wrapper.mmi -data ../../Debug/fsbl.elf -proc system_i/microblaze_0 -bit system_wrapper.bit -out download.bit -force
 mkdir -p ../flash
-echo -e "the_ROM_image:\n{\n$PWD/download.bit\n}\n" > ../flash/bootimage.bif
+
+case "$OSTYPE" in
+linux*) 
+	echo -e "the_ROM_image:\n{\n$PWD/download.bit\n}\n" > ../flash/bootimage.bif
+    ;;
+msys*)
+	BITFILE="`cygpath -w ${top}/sdk_workspace/fsbl/_ide/bitstream/download.bit`"
+	(echo "the_ROM_image:" && \
+    echo "{" && echo " ${BITFILE}" && \
+    echo "}" && echo "") > ../flash/bootimage.bif
+    ;;
+cygwin*) 
+	BITFILE="`cygpath -w ${top}/sdk_workspace/fsbl/_ide/bitstream/download.bit`"
+	(echo "the_ROM_image:" && \
+    echo "{" && echo " ${BITFILE}" && \
+    echo "}" && echo "") > ../flash/bootimage.bif
+    ;;
+*) 
+    echo -e "\033[41;36m OSTYPE Unkown: $OSTYPE \033[0m"
+    exit 1
+    ;;
+esac
+
+
 bootgen -arch fpga -image ../flash/bootimage.bif -w -o ../flash/BOOT.bin -interface spi 
+
+if [ $? != 0 ]
+then
+    echo -e "\n"
+    echo -e "\033[41;36m gen BOOT.bin fail!!! Press any key to exit \033[0m"
+    exit 1
+else
+    echo -e "\n"
+    echo -e "\033[42;31m gen BOOT.bin done!!! \033[0m"
+fi
 
 cd $top
 
@@ -43,7 +76,7 @@ then
     exit 1
 else
     echo -e "\n"
-    echo -e "\033[42;31m cp fsbl.bin done!!! \033[0m"
+    echo -e "\033[42;31m cp fsbl.bin done!!! Press any key to exit \033[0m"
 fi
 
 du -b ./output/fsbl.bin | awk '{print substr($1,$2)}' | xargs -I {} printf "%x\n" {} > ./output/fsbl.txt
@@ -56,8 +89,7 @@ fi
 
 # BOOT.bin for remote update
 cp ./sdk_workspace/fsbl/_ide/bitstream/download.bit ./output/
-source /opt/Xilinx/Vivado/2020.1/settings64.sh
-vivado -mode tcl -source write_cfgmem.tcl
+vivado -mode batch -source write_cfgmem.tcl
 if [ $? != 0 ]
 then
     echo -e "\n"

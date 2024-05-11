@@ -4,7 +4,7 @@
 :: del *.log *.jou
 
 set PATH=D:\msys64\usr\bin;%PATH%
-bash -i -c "source clean.sh -b -w -d"
+bash -i -c "source clean.sh -b -d -w"
 
 call D:\Xilinx\Vitis\2020.1\bin\xsct.bat create_SW_proj.tcl
 

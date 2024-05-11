@@ -130,7 +130,7 @@ bsp config stdout axi_uartlite_0
 #bsp setlib -name xilffs
 #bsp config fs_interface 2
 ##bsp setlib -name lwip211 -ver 1.3
-#bsp setlib -name lwip211
+bsp setlib -name lwip211
 ##bsp listparams -lib lwip211
 ##bsp config mem_size 134217728
 ##bsp config memp_n_pbuf 4096
