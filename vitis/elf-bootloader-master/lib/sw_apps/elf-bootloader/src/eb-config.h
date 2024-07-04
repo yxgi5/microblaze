@@ -39,7 +39,12 @@
  * Number of dummy bytes (derived from number of dummy cycles)
  * required for the SPI flash at the given frequency
  */
+#define QFLASH_LE_16MB
+#if defined (QFLASH_LE_16MB)
 #define SPI_FLASH_NDUMMY_BYTES	4
+#else
+#define SPI_FLASH_NDUMMY_BYTES	5
+#endif // #if defined (QFLASH_LE_16MB)
 
 /*
  * Base address of the ELF image in the SPI flash
@@ -56,11 +61,17 @@
  * SPI read operation to use
  */
 #define SPI_READ_OPERATION				0x6B
+#define SPI_READ_OPERATION_4B			0x6C
+#define ENTER_4B_ADDR_MODE				0xB7
+#define WRITE_ENABLE_CMD				0x06
+#define WRITE_DISABLE_CMD				0x04
 
 /*
  * Byte offset for the valid bytes in ReadBuffer
  */
 #define SPI_VALID_DATA_OFFSET			(4 + SPI_FLASH_NDUMMY_BYTES)
+
+#define SIXTEENMB 						(0x1000000)
 
 /*
  * Enable debug for the ELF loader

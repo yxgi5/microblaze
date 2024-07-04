@@ -31,16 +31,23 @@
 #include <xil_printf.h>
 #include <xspi.h>
 #include <xparameters.h>
+#define VERBOSE
+//#define DEBUG_ELF_LOADER
+
+//#ifdef VERBOSE
+//#include "xstatus.h"
+//#include "xgpio.h"
+//#endif // VERBOSE
 
 #include "elf32.h"
 #include "eb-config.h"
 
-//#define VERBOSE
-//#define DEBUG_ELF_LOADER
 
 static XSpi Spi;
 static u8 ReadBuffer[EFFECTIVE_READ_BUFFER_SIZE + SPI_VALID_DATA_OFFSET];
-
+//#ifdef VERBOSE
+//static XGpio AXI_gpio_inst;
+//#endif // VERBOSE
 /*
  * Reduce code size on Microblaze (no interrupts used)
  */
@@ -50,18 +57,64 @@ void _exception_handler() {}
 void _hw_exception_handler() {}
 #endif
 
+#if !defined (QFLASH_LE_16MB)
+void FlashEnterExit4BAddMode(XSpi *QspiPtr)
+{
+	u8 WriteDisableCmd = { WRITE_DISABLE_CMD };
+	u8 WriteEnableCmd = { WRITE_ENABLE_CMD };
+	u8 Cmd = { ENTER_4B_ADDR_MODE };
+	XSpi_Transfer(QspiPtr, &WriteEnableCmd, NULL, sizeof(WriteEnableCmd));
+	XSpi_Transfer(QspiPtr, &Cmd, NULL, sizeof(Cmd));
+	XSpi_Transfer(QspiPtr, &WriteDisableCmd, NULL, sizeof(WriteDisableCmd));
+}
+#endif // #if !defined (QFLASH_LE_16MB)
+
 /**
  * Simple wrapper function for reading a number of bytes from SPI flash.
  */
 int spi_flash_read(XSpi *InstancePtr, u32 FlashAddress, u8 *RecvBuffer, unsigned int ByteCount)
 {
+#if defined (QFLASH_LE_16MB)
 	RecvBuffer[0] = SPI_READ_OPERATION;
 	RecvBuffer[1] = (FlashAddress >> 16) & 0xFF;
 	RecvBuffer[2] = (FlashAddress >> 8) & 0xFF;
 	RecvBuffer[3] = FlashAddress & 0xFF;
+#else
+	RecvBuffer[0] = SPI_READ_OPERATION_4B;
+	RecvBuffer[1] = (FlashAddress >> 24) & 0xFF;	
+	RecvBuffer[2] = (FlashAddress >> 16) & 0xFF;
+	RecvBuffer[3] = (FlashAddress >> 8) & 0xFF;
+	RecvBuffer[4] = FlashAddress & 0xFF;
+#endif // 	
+#if defined (QFLASH_LE_16MB)
+		FlashEnterExit4BAddMode(&Spi);
+#endif // #if defined (QFLASH_LE_16MB)
 
 	return XSpi_Transfer(InstancePtr, RecvBuffer, RecvBuffer, ByteCount + SPI_VALID_DATA_OFFSET);
 }
+
+//#ifdef VERBOSE
+//int xgpio_init(void)
+//{
+//	int Status ;
+//
+//	u32 ret;
+//
+//	Status = XGpio_Initialize(&AXI_gpio_inst, XPAR_XGPIO_I2C_0_AXI_GPIO_0_DEVICE_ID) ;
+//	if (Status != XST_SUCCESS)
+//	{
+//		return XST_FAILURE ;
+//	}
+//	/* set as output */
+////	XGpio_DiscreteWrite(&AXI_gpio_inst, 1, 0xfff);
+////	XGpio_SetDataDirection(&AXI_gpio_inst, 1, 0x0);
+////	XGpio_DiscreteWrite(&AXI_gpio_inst, 1, 0xfff);
+//	XGpio_SetDataDirection(&AXI_gpio_inst, 2, 0x0);
+//	XGpio_DiscreteWrite(&AXI_gpio_inst, 2, 1);
+//
+//	return XST_SUCCESS ;
+//}
+//#endif // VERBOSE
 
 int main()
 {
@@ -69,6 +122,7 @@ int main()
 	elf32_phdr phdr;
 	u32 addr;
 	int ret, i, j;
+	u8 timeout = 0;
 
 	/*
 	 * Disable caches
@@ -83,6 +137,8 @@ int main()
 #endif
 
 #ifdef VERBOSE
+//	xgpio_init();
+	usleep(100000);
 	print("\r\nSPI ELF Bootloader\r\n");
 #endif
 
@@ -154,33 +210,60 @@ int main()
 
 	XSpi_Start(&Spi);
 	XSpi_IntrGlobalDisable(&Spi);
+
 #ifdef VERBOSE
 	print("Copying ELF image from SPI flash @ 0x");
 	putnum(ELF_IMAGE_BASEADDR);
 	print(" to RAM\r\n");
 #endif
 
+#if !defined (QFLASH_LE_16MB)
+    FlashEnterExit4BAddMode(&Spi);
+#endif // #if !defined (QFLASH_LE_16MB)
+
+	usleep(100*1000);
 	/*
 	 * Read ELF header
 	 */
-	ret = spi_flash_read(&Spi, ELF_IMAGE_BASEADDR, ReadBuffer, sizeof(hdr));
-	if (ret == XST_SUCCESS) {
-		memcpy(&hdr, ReadBuffer + SPI_VALID_DATA_OFFSET, sizeof(hdr));
+	print(" sizeof(hdr) = ");
+	putnum(sizeof(hdr));
+	print("\r\n");
+
+	do
+	{
+		usleep(100*1000);
+		ret = spi_flash_read(&Spi, ELF_IMAGE_BASEADDR, ReadBuffer, sizeof(hdr));
+		if (ret == XST_SUCCESS)
+		{
+			memcpy(&hdr, ReadBuffer + SPI_VALID_DATA_OFFSET, sizeof(hdr));
 
 #ifdef DEBUG_ELF_LOADER
-		print("hdr.ident:\r\n");
-		for (i = 0; i < HDR_IDENT_NBYTES; i++) {
-			putnum(hdr.ident[i]);
-			print("\r\n");
+			print("hdr.ident:\r\n");
+			for (i = 0; i < HDR_IDENT_NBYTES; i++) 
+			{
+				putnum(hdr.ident[i]);
+				print("\r\n");
+			}
+#endif
 		}
-#endif
-
-	} else {
+		else
+		{
 #ifdef VERBOSE
-		print("Failed to read ELF header");
+			print("Failed to read ELF header");
 #endif
-		return -1;
+			//return -1;
+		}
+		
+		if(timeout>=20)
+		{
+		    break;
+		}
+		timeout++;
 	}
+	while(hdr.ident[0] != HDR_IDENT_MAGIC_0 ||
+			hdr.ident[1] != HDR_IDENT_MAGIC_1 ||
+			hdr.ident[2] != HDR_IDENT_MAGIC_2 ||
+			hdr.ident[3] != HDR_IDENT_MAGIC_3);
 
 	/*
 	 * Validate ELF header
@@ -188,7 +271,8 @@ int main()
 	if (hdr.ident[0] != HDR_IDENT_MAGIC_0 ||
 			hdr.ident[1] != HDR_IDENT_MAGIC_1 ||
 			hdr.ident[2] != HDR_IDENT_MAGIC_2 ||
-			hdr.ident[3] != HDR_IDENT_MAGIC_3) {
+			hdr.ident[3] != HDR_IDENT_MAGIC_3)
+	{
 #ifdef VERBOSE
 		print("Invalid ELF header");
 #endif
